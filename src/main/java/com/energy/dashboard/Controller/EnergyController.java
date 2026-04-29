@@ -15,7 +15,16 @@ public class EnergyController {
     private EnergyService energyService;
 
     @GetMapping
-    public List<EnergyReading> getAllReadings() {
+    public List<EnergyReading> getReadings(
+            @RequestParam(required = false) Long lineId,
+            @RequestParam(required = false) String date) {
+
+        // If we have filters, use them!
+        if (lineId != null && date != null) {
+            return energyService.getReadingsByLineAndDate(lineId, date);
+        }
+
+        // Fallback to all if no filters
         return energyService.getAllReadings();
     }
 
