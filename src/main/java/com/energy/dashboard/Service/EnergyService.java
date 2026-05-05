@@ -7,8 +7,10 @@ import com.energy.dashboard.Repository.EnergyReadingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -24,12 +26,9 @@ public class EnergyService {
 
     public List<EnergyReading> getReadingsByLineAndDate(Long lineId, String dateStr) {
         LocalDate date = LocalDate.parse(dateStr);
-
-        // Create the window: 2026-04-28 00:00:00 to 2026-04-29 00:00:00
-        LocalDateTime startOfDay = date.atStartOfDay();
-        LocalDateTime endOfDay = date.plusDays(1).atStartOfDay();
-
-        return energyReadingRepository.findByLineAndDateRange(lineId, startOfDay, endOfDay);
+        Instant start = date.atStartOfDay().toInstant(ZoneOffset.UTC);
+        Instant end = date.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC);
+        return energyReadingRepository.findByLineAndDateRange(lineId, start, end);
     }
 
     public EnergyReading getReadingById(Long id) {
@@ -57,8 +56,8 @@ public class EnergyService {
 
     // --- Analytics Methods ---
     public Double getDailyTotals(Long meterId, LocalDate date) {
-        LocalDateTime start = date.atStartOfDay();
-        LocalDateTime end = date.plusDays(1).atStartOfDay();
+        Instant start = date.atStartOfDay().toInstant(ZoneOffset.UTC);
+        Instant end = date.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC);
         List<EnergyReading> readings = energyReadingRepository.findByMeterIdAndTsBetween(meterId, start, end);
 
         double total = 0.0;
@@ -69,16 +68,15 @@ public class EnergyService {
     }
 
     public EnergyReading getPeakReadingForLine(Long lineId, LocalDate date) {
-        LocalDateTime start = date.atStartOfDay();
-        LocalDateTime end = date.plusDays(1).atStartOfDay();
+        Instant start = date.atStartOfDay().toInstant(ZoneOffset.UTC);
+        Instant end = date.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC);
         return energyReadingRepository.findTopByLineAndDateRange(lineId, start, end)
                 .orElse(null);
     }
 
     public Double getLineTotals(Long lineId, LocalDate date) {
-        LocalDateTime start = date.atStartOfDay();
-        LocalDateTime end = date.plusDays(1).atStartOfDay();
-        // You’ll need a repository method like: findByMeterLineIdAndTsBetween
+        Instant start = date.atStartOfDay().toInstant(ZoneOffset.UTC);
+        Instant end = date.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC);
         List<EnergyReading> readings = energyReadingRepository.findByMeterLineIdAndTsBetween(lineId, start, end);
 
         double total = 0.0;
@@ -89,8 +87,8 @@ public class EnergyService {
     }
 
     public String getPeakHour(Long meterId, LocalDate date) {
-        LocalDateTime start = date.atStartOfDay();
-        LocalDateTime end = date.plusDays(1).atStartOfDay();
+        Instant start = date.atStartOfDay().toInstant(ZoneOffset.UTC);
+        Instant end = date.plusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC);
         List<EnergyReading> readings = energyReadingRepository.findByMeterIdAndTsBetween(meterId, start, end);
 
         EnergyReading peak = null;
@@ -99,7 +97,7 @@ public class EnergyService {
                 peak = r;
             }
         }
-        return (peak != null) ? peak.getTs().toLocalTime().toString() : null;
+        return (peak != null) ? peak.getTs().atZone(ZoneId.systemDefault()).toLocalTime().toString() : null;
     }
 
     public List<LineSummaryDTO> getLineComparison(String dateStr) {

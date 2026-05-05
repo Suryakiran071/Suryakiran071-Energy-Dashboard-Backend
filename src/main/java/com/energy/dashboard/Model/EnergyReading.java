@@ -1,11 +1,12 @@
 package com.energy.dashboard.Model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @AllArgsConstructor
@@ -33,11 +34,11 @@ public class EnergyReading {
         this.kwh = kwh;
     }
 
-    public LocalDateTime getTs() {
+    public Instant getTs() {
         return ts;
     }
 
-    public void setTs(LocalDateTime ts) {
+    public void setTs(Instant ts) {
         this.ts = ts;
     }
 
@@ -49,7 +50,9 @@ public class EnergyReading {
         this.meter = meter;
     }
 
-    private LocalDateTime ts;
+    @Column(columnDefinition = "TIMESTAMP")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, timezone = "UTC")
+    private Instant ts;
 
     @ManyToOne
     @JoinColumn(name = "meter_id")

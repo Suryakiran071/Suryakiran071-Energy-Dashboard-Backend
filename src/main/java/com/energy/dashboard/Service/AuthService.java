@@ -46,6 +46,12 @@ public class AuthService {
         return userRepository.findAll();
     }
 
+    public void declineUser(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        userRepository.delete(user);
+    }
+
     @Transactional
     public User approveUser(Long userId, Long lineId) {
         // 1. Find the User
@@ -63,4 +69,5 @@ public class AuthService {
 
         return userRepository.save(user);
     }
+
 }

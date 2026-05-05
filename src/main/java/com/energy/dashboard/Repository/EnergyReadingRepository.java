@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,22 +21,21 @@ public interface EnergyReadingRepository extends JpaRepository<EnergyReading, Lo
             "AND r.ts >= :start AND r.ts < :end")
     List<EnergyReading> findByLineAndDateRange(
             @Param("lineId") Long lineId,
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end
+            @Param("start") Instant start,
+            @Param("end") Instant end
     );
 
-    // Keep your existing ones if you use them for other reports!
-    List<EnergyReading> findByMeterIdAndTsBetween(Long meterId, LocalDateTime start, LocalDateTime end);
+    List<EnergyReading> findByMeterIdAndTsBetween(Long meterId, Instant start, Instant end);
 
-    List<EnergyReading> findByMeterLineIdAndTsBetween(Long lineId, LocalDateTime start, LocalDateTime end);
+    List<EnergyReading> findByMeterLineIdAndTsBetween(Long lineId, Instant start, Instant end);
 
     @Query("SELECT r FROM EnergyReading r WHERE r.meter.line.id = :lineId " +
             "AND r.ts >= :start AND r.ts < :end " +
             "ORDER BY r.kwh DESC LIMIT 1")
     Optional<EnergyReading> findTopByLineAndDateRange(
             @Param("lineId") Long lineId,
-            @Param("start") LocalDateTime start,
-            @Param("end") LocalDateTime end
+            @Param("start") Instant start,
+            @Param("end") Instant end
     );
     // --- ANALYTICS QUERIES (Add these now) ---
 

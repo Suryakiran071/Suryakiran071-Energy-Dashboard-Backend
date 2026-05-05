@@ -25,4 +25,10 @@ public class UserController {
     public User approveUser(@PathVariable Long id, @RequestParam Long lineId) {
         return authService.approveUser(id, lineId);
     }
+
+    // Decline and remove a pending user
+    @DeleteMapping("/{id}")
+    public void declineUser(@PathVariable Long id) {
+        authService.declineUser(id);
+    }
 }
