@@ -27,7 +27,6 @@ public class EnergyAnalyticsController {
         return energyService.getPeakReadingForLine(lineId, date);
     }
 
-    // Example extension: daily totals per line
     @GetMapping("/lineTotals")
     public Double getLineTotals(@RequestParam Long lineId, @RequestParam LocalDate date) {
         return energyService.getLineTotals(lineId, date);
@@ -39,19 +38,13 @@ public class EnergyAnalyticsController {
         return energyService.getPeakHour(meterId, date);
     }
 
-    // --- NEW: Comparison Endpoints for Charts ---
-
-    /**
-     * ADMIN VIEW: Returns a summary of all lines for a bar chart.
-     */
+    //ADMIN VIEW: Returns a summary of all lines for a bar chart.
     @GetMapping("/comparison/lines")
     public List<LineSummaryDTO> getLineComparison(@RequestParam String date) {
         return energyService.getLineComparison(date);
     }
 
-    /**
-     * OPERATOR VIEW: Returns a summary of all meters in a specific line.
-     */
+    //OPERATOR VIEW: Returns a summary of all meters in a specific line.
     @GetMapping("/comparison/meters")
     public List<MeterSummaryDTO> getMeterComparison(@RequestParam Long lineId, @RequestParam String date) {
         return energyService.getMeterComparison(lineId, date);
