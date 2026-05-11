@@ -11,6 +11,5 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsername(String username);
 
-    // Custom query to find pending users if you want to filter them specifically
     List<User> findByApprovedFalse();
 }

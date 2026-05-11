@@ -54,7 +54,7 @@ public class AuthService {
 
         user.setApproved(true);
         user.setRole("ROLE_USER");
-        user.setAssignedline(line);
+        user.setAssignedLine(line);
 
         return userRepository.save(user);
     }
